@@ -1,0 +1,78 @@
+---
+- name: deploying ref-impl-1-1
+  hosts: localhost
+  tasks:
+    - name: Include env varables
+      include_vars: "env.yaml"
+    - name: deployoperator role
+      import_role:
+        name: deployoperator
+    - name: estorecart role
+      import_role:
+        name: estorecart
+    - name: estorecart wait for 5 sec
+      pause:
+        seconds: 5
+    - name: Wait estorecart build to create
+      k8s:
+        kind: BuildConfig
+        state: present
+        name: "{{meta.name}}-{{meta.namespace}}-estorecart"
+        namespace: "devops"
+        wait: yes
+        wait_timeout: 30
+      register: bc_estorecart
+
+    - name: estorecart verify buildconfig output
+      debug:
+        var: bc_estorecart
+
+    - name: Get estorecart build status
+      k8s_info:
+        api_version: build.openshift.io/v1
+        kind: Build
+        name: "{{meta.name}}-{{meta.namespace}}-estorecart-{{bc_estorecart.result.status.lastVersion}}"
+        namespace: "devops"
+        field_selectors:
+          - status.phase=Complete
+      register: build_status
+      until: build_status.resources[0].status.phase == 'Complete'
+      delay: 10
+      retries: 30
+
+
+
+    - name: estoreshipping role
+      import_role:
+        name: estoreshipping
+
+    - name: estoreshipping  wait for 5 sec
+      pause:
+        seconds: 5
+
+    - name: Wait estoreshipping build to create
+      k8s:
+        kind: BuildConfig
+        state: present
+        name: "{{meta.name}}-{{meta.namespace}}-estoreshipping"
+        namespace: "devops"
+        wait: yes
+        wait_timeout: 30
+      register: bc_estoreshipping
+
+    - name: estoreshipping verify buildconfig output
+      debug:
+        var: bc_estoreshipping
+
+    - name: Get estoreshipping build status
+      k8s_info:
+        api_version: build.openshift.io/v1
+        kind: Build
+        name: "{{meta.name}}-{{meta.namespace}}-estoreshipping-{{bc_estoreshipping.result.status.lastVersion}}"
+        namespace: "devops"
+        field_selectors:
+          - status.phase=Complete
+      register: build_estoreshipping
+      until: build_estoreshipping.resources[0].status.phase == 'Complete'
+      delay: 10
+      retries: 30

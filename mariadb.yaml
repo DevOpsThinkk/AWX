@@ -1,0 +1,22 @@
+---
+- hosts: 54.183.197.194
+  become: yes
+  tasks:
+  - name: install mariadb server
+    yum:
+      name=mariadb-server
+      state=latest
+    tags:
+    - install
+    - total
+  - name: start maria db
+    service:
+      name=mariadb
+      state=started
+    tags:
+    - start
+    - total
+  - name: add user
+    user:
+      name=testuser
+

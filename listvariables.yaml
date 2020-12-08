@@ -1,0 +1,10 @@
+---
+- hosts: linux
+  vars:
+    teams: [csk, srh, mi, rcb]
+  tasks:
+  - name: pring list variables
+    debug:
+      msg="{{ item }}"
+    with_items:
+      - "{{ teams }}"

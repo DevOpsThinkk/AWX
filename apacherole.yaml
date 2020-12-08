@@ -1,0 +1,5 @@
+---
+- hosts: 54.183.197.194
+  become: yes
+  roles:
+  - apache

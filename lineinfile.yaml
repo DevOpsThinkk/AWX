@@ -1,0 +1,13 @@
+---
+- hosts: linux
+  tasks:
+  - name: create file
+    file:
+      path: /home/ansible/hostname.conf
+      state: touch
+  - name: add a line if not present
+    lineinfile:
+      path: /home/ansible/hostname.conf
+      regexp: '^Hostname'
+      line: hostname={{ ansible_hostname }}
+      state: present

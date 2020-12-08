@@ -1,0 +1,8 @@
+---
+- hosts: linux
+  tasks:
+  - name: download file
+    get_url:
+      url: https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl
+      dest: /home/ansible/kubectl
+      mode: 0755

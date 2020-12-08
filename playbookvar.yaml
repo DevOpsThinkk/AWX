@@ -1,0 +1,12 @@
+---
+- hosts: linux
+  vars:
+    test: welcome to training
+    Test: testing
+  tasks:
+  - name: print variab;e
+    debug:
+      msg="{{ test }}"
+  - name: print another variable
+    debug:
+      msg="{{ Test }}"

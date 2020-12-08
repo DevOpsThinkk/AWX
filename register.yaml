@@ -1,0 +1,9 @@
+---
+- hosts: linux
+  ignore_errors: yes
+  tasks:
+  - name: print std output
+    shell: ls -l test.txt 
+    register: output
+  - debug: msg="standard output={{output.stdout}}"
+  - debug: msg="standard error={{output.stderr}}"

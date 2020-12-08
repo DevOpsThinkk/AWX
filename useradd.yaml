@@ -1,0 +1,11 @@
+---
+- hosts: linux
+  vars:
+    username: testuser
+  become: yes
+  tasks:
+  - name: cretae user
+    user:
+      name: "{{ username }}"
+      state: present
+      shell: "{{ shell }}"

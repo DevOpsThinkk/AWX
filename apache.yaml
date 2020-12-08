@@ -1,0 +1,33 @@
+---
+- hosts: linux
+  become: yes
+  tasks:
+  - name: install apache on ubuntu
+    apt: name=apache2 update_cache=yes state=latest
+    when: ansible_os_family == "Debian"
+  - name: start apache on ubuntu
+    service: name=apache2 enabled=yes state=started
+    when: ansible_os_family == "Debian"
+  - name: install apache on centos
+    yum: name=httpd update_cache=yes state=latest
+    when: ansible_os_family == "RedHat"
+  - name: start apache on centos
+    service: name=httpd enabled=yes state=started
+    when: ansible_os_family == "RedHat"
+  - name: cretae index file using template on ubuntu
+    template:
+      src: /root/playbooks/index.html.j2
+      dest: /var/www/html/index.html
+    notify: restart apache2
+    when: ansible_os_family == "Debian"
+  - name: cretae index file using template on centos
+    template:
+      src: /root/playbooks/index.html.j2
+      dest: /var/www/html/index.html
+    notify: restart httpd
+    when: ansible_os_family == "RedHat"
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
+    - name: restart httpd
+      service: name=httpd state=restarted
